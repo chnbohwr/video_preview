@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 
 const render = () => {
-  const Main = require('containers').default;
+  const Main = require('VideoProject/').default;
 
   ReactDOM.render(
     <AppContainer>
@@ -18,7 +18,7 @@ render();
 // migrate by this guide
 // https://github.com/gaearon/react-hot-loader/tree/master/docs#migration-to-30
 if (module.hot) {
-  module.hot.accept('containers/', () => {
+  module.hot.accept('VideoProject/', () => {
     render();
   });
 }

@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
+import ProgressBar from './ProgressBar/ProgressBar';
+import data from './testdata';
 
 export default class Main extends Component {
   render() {
     return (
-      <div style={{ textAlign: 'center' }}>
-        <h2>Hello, I`m ReactMaker.</h2>
-        <p>To get started, edit containers/index.js</p>
+      <div>
+        <ProgressBar videos={data} />
       </div>
     );
   }
