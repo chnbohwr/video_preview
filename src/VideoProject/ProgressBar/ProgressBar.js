@@ -1,20 +1,50 @@
 import React, { PureComponent } from 'react';
+import Dom from 'react-dom';
 import PropTypes from 'prop-types';
 import * as Style from './style';
-import ProgressItem from '../ProgressItem/ProgressItem';
+import MediaItem from './MediaItem/MediaItem';
+
+/**
+ * calcaute whther the progress item should be selected
+ * @param {object} mediaData
+ * @param {array} mediaList
+ * @param {number} progress
+ */
+const calcIsSelect = (mediaData, mediaList, progress) => {
+  let calculatedTime = 0;
+  let nowMedia = null;
+  mediaList.forEach(media => {
+    const mediaStartTime = calculatedTime;
+    const mediaEndTime = calculatedTime + media.length;
+    if (progress >= mediaStartTime && progress < mediaEndTime) {
+      nowMedia = media;
+    }
+    calculatedTime = mediaEndTime;
+  });
+  if (nowMedia && nowMedia === mediaData) {
+    return true;
+  }
+  return false;
+}
 
 export default class ProgressBar extends PureComponent {
-  static propTypes = {
-    videos: PropTypes.arrayOf(PropTypes.object),
-  }
-
-  static defaultProps = {
-    videos: [],
-  }
 
   ratioVariable = 0.25
   minimumRatio = 0.25
   maxRatio = 2
+  itemContainerElement = React.createRef();
+
+  static propTypes = {
+    mediaList: PropTypes.arrayOf(PropTypes.object),
+    progress: PropTypes.number,
+    onClickBar: PropTypes.func,
+  }
+
+  static defaultProps = {
+    mediaList: [],
+    progress: 0,
+    onClickBar: () => { },
+  }
 
   state = {
     ratio: 1,
@@ -36,17 +66,29 @@ export default class ProgressBar extends PureComponent {
     this.setState({ ratio });
   }
 
+  onClickContainer = (e) => {
+    const pointX = e.pageX - Dom.findDOMNode(this.itemContainerElement.current).offsetLeft;
+    console.log(pointX);
+    this.props.onClickBar(pointX);
+  }
+
   render() {
-    const { videos } = this.props;
+    const { mediaList, progress } = this.props;
     const { ratio } = this.state;
-    const totalWidth = videos.reduce((len, video) => (len + video.length), 0);
+    const totalWidth = mediaList.reduce((len, video) => (len + video.length), 0);
     return (
       <Style.Container>
         <Style.BarContainer>
-          <Style.ItemsContainer style={{ width: (totalWidth * ratio) + 30 }}>
+          <Style.ItemsContainer ref={this.itemContainerElement} style={{ width: (totalWidth * ratio) + 30 }} onClick={this.onClickContainer}>
             {
-              videos.map(data => <ProgressItem key={`pi_${data.title}`} videoData={data} ratio={ratio} />)
+              mediaList.map(data =>
+                <MediaItem
+                  isSelect={calcIsSelect(data, mediaList, progress)}
+                  key={`pi_${data.title}`}
+                  mediaData={data}
+                  ratio={ratio} />)
             }
+            <Style.Progress style={{ x: progress * ratio }} />
           </Style.ItemsContainer>
         </Style.BarContainer>
         <Style.ButtonContainer>

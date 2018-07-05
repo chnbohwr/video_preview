@@ -35,3 +35,12 @@ export const Button = styled.button`
   height: 18px;
   line-height: 18px;
 `;
+
+export const Progress = styled.div`
+  width: 5px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: red;
+`;
