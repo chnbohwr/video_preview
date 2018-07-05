@@ -6,11 +6,14 @@ export default class WallVideoEditor extends Component {
   state = {
     progress: 0, // video progress
   }
+  onClickProgress = (progress) => {
+    this.setState({progress});
+  }
   render() {
     const { progress } = this.state;
     return (
       <div>
-        <ProgressBar mediaList={data} progress={progress} />
+        <ProgressBar mediaList={data} progress={progress} onClickBar={this.onClickProgress} />
       </div>
     );
   }

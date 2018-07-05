@@ -33,6 +33,7 @@ export default class ProgressBar extends PureComponent {
   minimumRatio = 0.25
   maxRatio = 2
   itemContainerElement = React.createRef();
+  barContainerElement = React.createRef();
 
   static propTypes = {
     mediaList: PropTypes.arrayOf(PropTypes.object),
@@ -67,7 +68,14 @@ export default class ProgressBar extends PureComponent {
   }
 
   onClickContainer = (e) => {
-    const pointX = e.pageX - Dom.findDOMNode(this.itemContainerElement.current).offsetLeft;
+    const scrollLeft = Dom.findDOMNode(this.barContainerElement.current).scrollLeft;
+    const offsetLeft = Dom.findDOMNode(this.itemContainerElement.current).offsetLeft;
+    const { ratio } = this.state;
+    console.log(`pageX:${e.pageX} scrollLeft:${scrollLeft} offsetLeft:${offsetLeft}`);
+    const pointX = Math.round(
+      (scrollLeft / ratio) +
+      ((e.pageX - offsetLeft) / ratio)
+    );
     console.log(pointX);
     this.props.onClickBar(pointX);
   }
@@ -78,7 +86,7 @@ export default class ProgressBar extends PureComponent {
     const totalWidth = mediaList.reduce((len, video) => (len + video.length), 0);
     return (
       <Style.Container>
-        <Style.BarContainer>
+        <Style.BarContainer ref={this.barContainerElement}>
           <Style.ItemsContainer ref={this.itemContainerElement} style={{ width: (totalWidth * ratio) + 30 }} onClick={this.onClickContainer}>
             {
               mediaList.map(data =>
