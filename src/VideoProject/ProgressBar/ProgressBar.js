@@ -75,7 +75,7 @@ export default class ProgressBar extends PureComponent {
     const pointX = Math.round(
       (scrollLeft / ratio) +
       ((e.pageX - offsetLeft) / ratio)
-    );
+    ) - 1;
     console.log(pointX);
     this.props.onClickBar(pointX);
   }
@@ -96,7 +96,7 @@ export default class ProgressBar extends PureComponent {
                   mediaData={data}
                   ratio={ratio} />)
             }
-            <Style.Progress style={{ x: progress * ratio }} />
+            <Style.Progress style={{ left: progress * ratio }} />
           </Style.ItemsContainer>
         </Style.BarContainer>
         <Style.ButtonContainer>
