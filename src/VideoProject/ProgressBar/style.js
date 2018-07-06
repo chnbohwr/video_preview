@@ -7,7 +7,7 @@ export const Container = styled.div`
   justify-content: flex-start;
 `;
 
-export const BarContainer = styled.div`
+export const BarScroller = styled.div`
   width: calc(100% - 40px);
   height: 40px;
   border: 1px solid #777;
