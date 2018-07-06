@@ -1,41 +1,85 @@
 import React, { Component } from 'react';
-import ProgressBar from './ProgressBar/index';
-import LayoutPreview from './LayoutPreview/index';
-import mediaList from './mediaDataset';
+import ProgressBar from './ProgressBar/ProgressBar';
+import VideoPreview from './VideoPreview/VideoPreview';
+import ImgPlayer from './ImgPlayer';
+import data from './mediaDataset';
+
+const MEDIA_TYPE = {
+  IMAGE: "i",
+  VIDEO: "v"
+};
 
 export default class WallVideoEditor extends Component {
   state = {
     progress: 0, // video progress
     nowMediaIndex: 0,
-    isPlay: true,
+    isPlay: false,
     ShouldChangeVideoProgress: false,
+    mediaList: data
   }
+
+  playerList = this.state.mediaList.map((mediaData) =>
+    (
+      mediaData.type === MEDIA_TYPE.VIDEO
+        ? React.createRef()
+        : { current: new ImgPlayer(mediaData.length) }
+    )
+  )
+
   onClickProgressItem = ({ nowMediaIndex, progress }) => {
-    this.setState({ nowMediaIndex, progress });
+    this.setState({ nowMediaIndex, progress }, this.videoControl);
   }
-  onUpdateProgress = ({ progress }) => {
-    this.setState({ progress });
+
+  onPlay = ({ currentTime }) => {
+    this.setState({ progress: currentTime });
   }
+
   onEnd = () => {
-    const { nowMediaIndex } = this.state;
+    const { nowMediaIndex, mediaList } = this.state;
     if (nowMediaIndex < (mediaList.length - 1)) {
-      this.setState({ nowMediaIndex: nowMediaIndex + 1, progress: 0 });
+      this.setState({ nowMediaIndex: nowMediaIndex + 1, progress: 0 }, this.videoControl);
     }
   }
+
   onChangePlayStatus = ({ isPlay }) => {
-    this.setState({ isPlay });
+    const nowVideoPlayer = this.playerList[this.state.nowMediaIndex].current;
+    console.log(nowVideoPlayer);
+    this.setState({ isPlay }, this.videoControl);
   }
+
+  videoControl = () => {
+    const { nowMediaIndex, mediaList } = this.state;
+    const nowVideoPlayer = this.playerList[nowMediaIndex].current;
+    this.playerList.forEach((p) => {
+      const player = p.current;
+      player.pause();
+      player.currentTime = 0;
+      player.onended = () => { };
+      player.ontimeupdate = () => { };
+    });
+    nowVideoPlayer.currentTime = this.state.progress;
+    if (this.state.isPlay) {
+      nowVideoPlayer.play();
+      nowVideoPlayer.ontimeupdate = this.onPlay.bind(this, nowVideoPlayer)
+      nowVideoPlayer.onended = this.onEnd
+    }
+  }
+
   render() {
-    const { progress, nowMediaIndex, isPlay } = this.state;
+    const { playerList, state: { progress, nowMediaIndex, isPlay, mediaList } } = this;
     return (
       <div>
-        <LayoutPreview
-          nowMediaIndex={nowMediaIndex}
-          mediaList={mediaList}
-          progress={progress}
-          onUpdateProgress={this.onUpdateProgress}
-          onEnd={this.onEnd}
-          isPlay={isPlay} />
+        <div>
+          {
+            mediaList.map((mediaData, index) => (
+              <VideoPreview
+                key={`video${index}`}
+                domref={playerList[index]}
+                mediaData={mediaData}
+                isActive={nowMediaIndex === index} />
+            ))
+          }
+        </div>
         <button type="button" onClick={() => { this.onChangePlayStatus({ isPlay: true }); }}>play</button>
         <button type="button" onClick={() => { this.onChangePlayStatus({ isPlay: false }); }}>pause</button>
         <ProgressBar

@@ -41,6 +41,6 @@ export const Progress = styled.div`
   height: 100%;
   position: absolute;
   top: 0;
-  left: 0;
+  left: -2px;
   background-color: red;
 `;

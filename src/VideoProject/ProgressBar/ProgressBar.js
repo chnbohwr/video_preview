@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import Dom from 'react-dom';
 import PropTypes from 'prop-types';
 import * as Style from './style';
-import MediaItem from './MediaItem/MediaItem';
+import MediaItem from '../ProgressItem/ProgressItem';
 
 const calcProgressX = ({ mediaList, nowMediaIndex, progress }) => {
   let pastTime = 0;
@@ -76,7 +76,7 @@ export default class ProgressBar extends PureComponent {
                   ratio={ratio} />
               ))
             }
-            <Style.Progress style={{ left: progressPosx }} />
+            <Style.Progress style={{ transform: `translateX(${progressPosx}px)` }} />
           </Style.ItemsContainer>
         </Style.BarScroller>
         <Style.ButtonContainer>

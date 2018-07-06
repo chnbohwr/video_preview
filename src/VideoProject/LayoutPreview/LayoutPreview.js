@@ -21,6 +21,11 @@ export default class LayoutPreview extends PureComponent {
     isPlay: PropTypes.bool,
   }
 
+  constructor(props) {
+    super(props);
+    this.playerList = props.mediaList.map(() => React.createRef());
+  }
+
   render() {
     const {
       mediaList, progress, nowMediaIndex,
