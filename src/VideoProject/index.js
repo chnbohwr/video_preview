@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import ProgressBar from './ProgressBar/ProgressBar';
 import VideoPreview from './VideoPreview/VideoPreview';
+import CanvasPreview from './CanvasPreview/CanvasPreview';
 import ImgPlayer from './ImgPlayer';
-import data from './mediaDataset';
+import mediaDataSet from './mediaDataset';
+import canvasDataSet from './canvasDataset';
 
 const MEDIA_TYPE = {
   IMAGE: "i",
@@ -15,7 +17,8 @@ export default class WallVideoEditor extends Component {
     nowMediaIndex: 0,
     isPlay: false,
     ShouldChangeVideoProgress: false,
-    mediaList: data
+    mediaList: mediaDataSet,
+    canvasList: canvasDataSet,
   }
 
   playerList = this.state.mediaList.map((mediaData) =>
@@ -66,7 +69,10 @@ export default class WallVideoEditor extends Component {
   }
 
   render() {
-    const { playerList, state: { progress, nowMediaIndex, isPlay, mediaList } } = this;
+    const {
+      playerList,
+      state: { progress, nowMediaIndex, isPlay, mediaList, canvasList }
+    } = this;
     return (
       <div>
         <div>
@@ -80,6 +86,7 @@ export default class WallVideoEditor extends Component {
             ))
           }
         </div>
+        <CanvasPreview canvasList={canvasList} />
         <button type="button" onClick={() => { this.onChangePlayStatus({ isPlay: true }); }}>play</button>
         <button type="button" onClick={() => { this.onChangePlayStatus({ isPlay: false }); }}>pause</button>
         <ProgressBar
