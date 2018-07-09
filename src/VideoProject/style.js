@@ -18,5 +18,4 @@ export const LayoutContainer = styled.div`
   top: 0;
   left: 0;
   z-index: 3;
-  background: #ccc;
 `;

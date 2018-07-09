@@ -32,20 +32,28 @@ export default class CanvasPreview extends PureComponent {
   render() {
     const { canvasList } = this.props;
     const cd = totalWidthHeight(canvasList);
-    const containerStyle = { width: cd.maxX - cd.minX, height: cd.maxY - cd.minY };
+    const containerStyle = {
+      width: cd.maxX - cd.minX,
+      height: cd.maxY - cd.minY,
+      border: '1px solid yellow',
+    };
 
     return (
       <div style={containerStyle}>
         <svg width={containerStyle.width} height={containerStyle.height}>
           {
             canvasList.map(data => (
-            <polygon points={`
-            ${data.coordinate_in[0].x},${data.coordinate_in[0].y}
-            ${data.coordinate_in[1].x},${data.coordinate_in[1].y}
-            ${data.coordinate_in[2].x},${data.coordinate_in[2].y}
-            ${data.coordinate_in[3].x},${data.coordinate_in[3].y}
+              <path
+                stroke="yellow"
+                fill="transparent"
+                d={`
+M${data.coordinate_in[0].x} ${data.coordinate_in[0].y}
+L${data.coordinate_in[1].x} ${data.coordinate_in[1].y}
+L${data.coordinate_in[2].x} ${data.coordinate_in[2].y}
+L${data.coordinate_in[3].x} ${data.coordinate_in[3].y}
+Z
             `} />
-          ))
+            ))
           }
         </svg>
       </div>

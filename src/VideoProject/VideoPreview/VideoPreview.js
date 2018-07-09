@@ -1,8 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 
-const VIDEO_WIDTH = 600;
-
 const MEDIA_TYPE = {
   IMAGE: "i",
   VIDEO: "v"
@@ -30,14 +28,10 @@ export default class VideoPreview extends PureComponent {
             ? (
               <img
                 alt=""
-                width={VIDEO_WIDTH}
-                height="400"
                 src={mediaData.sources[0]}
               />
             ) : (
               <video
-                width={VIDEO_WIDTH}
-                height="400"
                 muted
                 ref={domref}>
                 <source src={mediaData.sources[0]} type="video/mp4" />
