@@ -86,34 +86,30 @@ export default class WallVideoEditor extends Component {
     return (
       <div>
         <Style.Scroller>
-          <Style.MainContainer>
-            <Style.VideosContainer>
-              {
-                mediaList.map((mediaData, index) => (
+          {
+            mediaList.map((mediaData, index) => (
+              <Style.LayoutContainer
+                style={{ display: nowMediaIndex === index ? 'block' : 'none' }}
+              >
+                <Style.VideosContainer>
                   <VideoPreview
                     key={`video${index}`}
                     domref={playerList[index]}
                     mediaData={mediaData}
-                    isActive={nowMediaIndex === index} />
-                ))
-              }
-            </Style.VideosContainer>
-            <Style.LayoutContainer>
-              {
-                wallDataset.map(wallData => (
+                  />
+                </Style.VideosContainer>
+                <Style.CanvasContainer>
                   <CanvasPreview
-                    key={`wall${wallData.id}`}
+                    key={`wall${wallDataset[index].id}`}
                     canvasList={canvasList}
-                    position={wallData.position}
-                    ratio={wallData.ratio}
-                    id={wallData.id}
-                    isActive={wallData.id === nowMediaIndex}
+                    position={wallDataset[index].position}
+                    ratio={wallDataset[index].ratio}
+                    id={wallDataset[index].id}
                     onChange={this.onChangeLayout} />
-                ))
-              }
-              <CanvasPreview canvasList={canvasList} />
-            </Style.LayoutContainer>
-          </Style.MainContainer>
+                </Style.CanvasContainer>
+              </Style.LayoutContainer>
+            ))
+          }
         </Style.Scroller>
         <button type="button" onClick={() => { this.onChangePlayStatus({ isPlay: true }); }}>play</button>
         <button type="button" onClick={() => { this.onChangePlayStatus({ isPlay: false }); }}>pause</button>

@@ -6,7 +6,7 @@ export const Scroller = styled.div`
   overflow: scroll;
 `;
 
-export const MainContainer = styled.div`
+export const LayoutContainer = styled.div`
   position: relative;
   width: 100%;
 `;
@@ -18,7 +18,7 @@ export const VideosContainer = styled.div`
   z-index: 2;
 `;
 
-export const LayoutContainer = styled.div`
+export const CanvasContainer = styled.div`
   position: absolute;
   top: 0;
   left: 0;

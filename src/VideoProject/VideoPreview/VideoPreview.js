@@ -20,9 +20,9 @@ export default class VideoPreview extends PureComponent {
   }
   render() {
     console.log('video render trigger');
-    const { mediaData, isActive, domref } = this.props;
+    const { mediaData, domref } = this.props;
     return (
-      <div style={{ display: isActive ? 'block' : 'none' }}>
+      <div>
         {
           mediaData.type === MEDIA_TYPE.IMAGE
             ? (

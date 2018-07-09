@@ -58,10 +58,10 @@ export default class CanvasPreview extends PureComponent {
 
   render() {
     const {
-      canvasList, position, ratio, isActive,
+      canvasList, position, ratio,
     } = this.props;
     const size = { width: this.cd.width * ratio, height: this.cd.height * ratio };
-    const style = { border: '1px solid yellow', display: isActive ? 'block' : 'none' };
+    const style = { border: '1px solid yellow'};
     return (
       <Rnd
         style={style}
