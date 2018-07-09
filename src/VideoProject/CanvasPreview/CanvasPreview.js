@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { map } from 'rxjs/operators';
 
 const totalWidthHeight = (canvasList) => canvasList.reduce((acc, val) => {
   val.coordinate_out.forEach(coord => {
@@ -25,13 +26,27 @@ export default class CanvasPreview extends PureComponent {
   static propTypes = {
     canvasList: PropTypes.array,
   }
+  static defaultProps = {
+    canvasList: [],
+  }
   render() {
     const { canvasList } = this.props;
-    const containerStyle = totalWidthHeight(canvasList);
+    const cd = totalWidthHeight(canvasList);
+    const containerStyle = { width: cd.maxX - cd.minX, height: cd.maxY - cd.minY };
+
     return (
       <div style={containerStyle}>
-        <svg width={} height={} viewBox={}>
-
+        <svg width={containerStyle.width} height={containerStyle.height}>
+          {
+            canvasList.map(data => (
+            <polygon points={`
+            ${data.coordinate_in[0].x},${data.coordinate_in[0].y}
+            ${data.coordinate_in[1].x},${data.coordinate_in[1].y}
+            ${data.coordinate_in[2].x},${data.coordinate_in[2].y}
+            ${data.coordinate_in[3].x},${data.coordinate_in[3].y}
+            `} />
+          ))
+          }
         </svg>
       </div>
     );
