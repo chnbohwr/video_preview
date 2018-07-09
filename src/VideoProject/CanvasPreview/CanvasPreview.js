@@ -26,36 +26,45 @@ const totalWidthHeight = (canvasList) => {
 export default class CanvasPreview extends PureComponent {
   static propTypes = {
     canvasList: PropTypes.array,
+    position: PropTypes.object,
+    ratio: PropTypes.number,
+    onChange: PropTypes.func,
+    id: PropTypes.number,
+    isActive: PropTypes.bool,
   }
 
   static defaultProps = {
+    id: 1,
     canvasList: [],
+    position: { x: 0, y: 0, },
+    ratio: 1,
+    onChange: () => { },
+    isActive: false,
   }
 
   cd = totalWidthHeight(this.props.canvasList)
 
-  state = {
-    position: { x: 0, y: 0, },
-    ratio: 1,
-  }
-
   onDragStop = (e, d) => {
-    this.setState({ position: { x: d.x, y: d.y } });
+    const { ratio, id } = this.props;
+    this.props.onChange({ position: { x: d.x, y: d.y }, ratio, id });
   }
 
   onResize = (e, direction, ref) => {
     const width = parseInt(ref.style.width, 10);
     const ratio = width / this.cd.width;
-    this.setState({ ratio });
+    const { position, id } = this.props;
+    this.props.onChange({ position, ratio, id });
   }
 
   render() {
-    const { canvasList } = this.props;
-    const { position, ratio, } = this.state;
+    const {
+      canvasList, position, ratio, isActive,
+    } = this.props;
     const size = { width: this.cd.width * ratio, height: this.cd.height * ratio };
+    const style = { border: '1px solid yellow', display: isActive ? 'block' : 'none' };
     return (
       <Rnd
-        style={{ border: '1px solid yellow' }}
+        style={style}
         position={position}
         size={size}
         onResize={this.onResize}
@@ -63,8 +72,9 @@ export default class CanvasPreview extends PureComponent {
         onDragStop={this.onDragStop}>
         <svg width={size.width} height={size.height}>
           {
-            canvasList.map(data => (
+            canvasList.map((data, i) => (
               <path
+                key={`canvas${i}`}
                 stroke="yellow"
                 fill="transparent"
                 d={`

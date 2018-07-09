@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import produce from 'immer';
 import ProgressBar from './ProgressBar/ProgressBar';
 import VideoPreview from './VideoPreview/VideoPreview';
 import CanvasPreview from './CanvasPreview/CanvasPreview';
@@ -19,6 +20,7 @@ export default class WallVideoEditor extends Component {
     isPlay: false,
     mediaList: mediaDataSet,
     canvasList: canvasDataSet,
+    wallDataset: mediaDataSet.map((d, i) => ({ position: { x: 0, y: 0 }, ratio: 1, id: i, })),
   }
 
   playerList = this.state.mediaList.map(mediaData => (
@@ -48,6 +50,13 @@ export default class WallVideoEditor extends Component {
     this.setState({ isPlay }, this.videoControl);
   }
 
+  onChangeLayout = ({ id, position, ratio }) => {
+    const wallDataset = produce(this.state.wallDataset, (dataset) => {
+      dataset[id] = { id, position, ratio };
+    });
+    this.setState({ wallDataset });
+  }
+
   videoControl = () => {
     const { nowMediaIndex, mediaList } = this.state;
     const nowVideoPlayer = this.playerList[nowMediaIndex].current;
@@ -71,7 +80,7 @@ export default class WallVideoEditor extends Component {
       playerList,
       state: {
         progress, nowMediaIndex,
-        mediaList, canvasList,
+        mediaList, canvasList, wallDataset,
       }
     } = this;
     return (
@@ -90,6 +99,18 @@ export default class WallVideoEditor extends Component {
               }
             </Style.VideosContainer>
             <Style.LayoutContainer>
+              {
+                wallDataset.map(wallData => (
+                  <CanvasPreview
+                    key={`wall${wallData.id}`}
+                    canvasList={canvasList}
+                    position={wallData.position}
+                    ratio={wallData.ratio}
+                    id={wallData.id}
+                    isActive={wallData.id === nowMediaIndex}
+                    onChange={this.onChangeLayout} />
+                ))
+              }
               <CanvasPreview canvasList={canvasList} />
             </Style.LayoutContainer>
           </Style.MainContainer>
