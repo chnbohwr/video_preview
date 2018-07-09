@@ -1,9 +1,14 @@
 import styled from 'styled-components';
 
+export const Scroller = styled.div`
+  width: 100%;
+  height: 800px;
+  overflow: scroll;
+`;
+
 export const MainContainer = styled.div`
   position: relative;
-  width: 800px;
-  height: 800px;
+  width: 100%;
 `;
 
 export const VideosContainer = styled.div`

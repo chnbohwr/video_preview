@@ -76,22 +76,24 @@ export default class WallVideoEditor extends Component {
     } = this;
     return (
       <div>
-        <Style.MainContainer>
-          <Style.VideosContainer>
-            {
-              mediaList.map((mediaData, index) => (
-                <VideoPreview
-                  key={`video${index}`}
-                  domref={playerList[index]}
-                  mediaData={mediaData}
-                  isActive={nowMediaIndex === index} />
-              ))
-            }
-          </Style.VideosContainer>
-          <Style.LayoutContainer>
-            <CanvasPreview canvasList={canvasList} />
-          </Style.LayoutContainer>
-        </Style.MainContainer>
+        <Style.Scroller>
+          <Style.MainContainer>
+            <Style.VideosContainer>
+              {
+                mediaList.map((mediaData, index) => (
+                  <VideoPreview
+                    key={`video${index}`}
+                    domref={playerList[index]}
+                    mediaData={mediaData}
+                    isActive={nowMediaIndex === index} />
+                ))
+              }
+            </Style.VideosContainer>
+            <Style.LayoutContainer>
+              <CanvasPreview canvasList={canvasList} />
+            </Style.LayoutContainer>
+          </Style.MainContainer>
+        </Style.Scroller>
         <button type="button" onClick={() => { this.onChangePlayStatus({ isPlay: true }); }}>play</button>
         <button type="button" onClick={() => { this.onChangePlayStatus({ isPlay: false }); }}>pause</button>
         <ProgressBar
