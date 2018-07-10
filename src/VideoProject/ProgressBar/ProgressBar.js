@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
-import Dom from 'react-dom';
 import PropTypes from 'prop-types';
 import * as Style from './style';
-import MediaItem from '../ProgressItem/ProgressItem';
+import MediaItem from './ProgressItem/ProgressItem';
 
 const calcProgressX = ({ mediaList, nowMediaIndex, progress }) => {
   let pastTime = 0;

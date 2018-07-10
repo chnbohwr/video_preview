@@ -64,6 +64,7 @@ export default class CanvasPreview extends PureComponent {
     const style = { border: '1px solid yellow'};
     return (
       <Rnd
+        className="canvasDraggable"
         style={style}
         position={position}
         size={size}

@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import produce from 'immer';
 import ProgressBar from './ProgressBar/ProgressBar';
-import VideoPreview from './VideoPreview/VideoPreview';
-import CanvasPreview from './CanvasPreview/CanvasPreview';
+import WallPreview from './WallPreview/WallPreview';
 import ImgPlayer from './ImgPlayer';
 import mediaDataSet from './mediaDataset';
 import canvasDataSet from './canvasDataset';
-import * as Style from './style';
 
 const MEDIA_TYPE = {
   IMAGE: "i",
@@ -21,6 +19,7 @@ export default class WallVideoEditor extends Component {
     mediaList: mediaDataSet,
     canvasList: canvasDataSet,
     wallDataset: mediaDataSet.map((d, i) => ({ position: { x: 0, y: 0 }, ratio: 1, id: i, })),
+    layoutRatio: 1,
   }
 
   playerList = this.state.mediaList.map(mediaData => (
@@ -57,6 +56,13 @@ export default class WallVideoEditor extends Component {
     this.setState({ wallDataset });
   }
 
+  onLayoutZoom = ({ ratio }) => {
+    let newRatio = this.state.layoutRatio + ratio;
+    if (newRatio > 2) { newRatio = 2; }
+    if (newRatio < 0.25) { newRatio = 0.25; }
+    this.setState({ layoutRatio: newRatio });
+  }
+
   videoControl = () => {
     const { nowMediaIndex, mediaList } = this.state;
     const nowVideoPlayer = this.playerList[nowMediaIndex].current;
@@ -79,38 +85,24 @@ export default class WallVideoEditor extends Component {
     const {
       playerList,
       state: {
-        progress, nowMediaIndex,
+        progress, nowMediaIndex, layoutRatio,
         mediaList, canvasList, wallDataset,
       }
     } = this;
     return (
       <div>
-        <Style.Scroller>
-          {
-            mediaList.map((mediaData, index) => (
-              <Style.LayoutContainer
-                style={{ display: nowMediaIndex === index ? 'block' : 'none' }}
-              >
-                <Style.VideosContainer>
-                  <VideoPreview
-                    key={`video${index}`}
-                    domref={playerList[index]}
-                    mediaData={mediaData}
-                  />
-                </Style.VideosContainer>
-                <Style.CanvasContainer>
-                  <CanvasPreview
-                    key={`wall${wallDataset[index].id}`}
-                    canvasList={canvasList}
-                    position={wallDataset[index].position}
-                    ratio={wallDataset[index].ratio}
-                    id={wallDataset[index].id}
-                    onChange={this.onChangeLayout} />
-                </Style.CanvasContainer>
-              </Style.LayoutContainer>
-            ))
-          }
-        </Style.Scroller>
+        <WallPreview
+          mediaList={mediaList}
+          canvasList={canvasList}
+          nowMediaIndex={nowMediaIndex}
+          wallDataset={wallDataset}
+          onChangeLayout={this.onChangeLayout}
+          playerList={this.playerList}
+          layoutRatio={layoutRatio}
+        />
+        <button type="button" onClick={() => { this.onLayoutZoom({ ratio: 0.25 }); }}>zoom in</button>
+        <button type="button" onClick={() => { this.onLayoutZoom({ ratio: -0.25 }); }}>zoom out</button>
+
         <button type="button" onClick={() => { this.onChangePlayStatus({ isPlay: true }); }}>play</button>
         <button type="button" onClick={() => { this.onChangePlayStatus({ isPlay: false }); }}>pause</button>
         <ProgressBar

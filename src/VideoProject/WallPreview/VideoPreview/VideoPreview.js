@@ -22,11 +22,12 @@ export default class VideoPreview extends PureComponent {
     console.log('video render trigger');
     const { mediaData, domref } = this.props;
     return (
-      <div>
+      <React.Fragment>
         {
           mediaData.type === MEDIA_TYPE.IMAGE
             ? (
               <img
+                draggable="false"
                 alt=""
                 src={mediaData.sources[0]}
               />
@@ -38,7 +39,7 @@ export default class VideoPreview extends PureComponent {
               </video>
             )
         }
-      </div>
+      </React.Fragment>
     );
   }
 }
