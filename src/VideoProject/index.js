@@ -28,7 +28,7 @@ export default class WallVideoEditor extends Component {
       : { current: new ImgPlayer(mediaData.length) }
   ))
 
-  onClickProgressItem = ({ nowMediaIndex, progress }) => {
+  onDragProgressBar = ({ nowMediaIndex, progress }) => {
     this.setState({ nowMediaIndex, progress }, this.videoControl);
   }
 
@@ -78,6 +78,18 @@ export default class WallVideoEditor extends Component {
       nowVideoPlayer.onended = this.onEnd;
     }
   }
+  onChangeMediaSort = ({ mediaList, filterIndex, targetIndex }) => {
+    this.playerList.forEach((p) => {
+      const player = p.current;
+      player.pause();
+      player.currentTime = 0;
+    });
+    const temp = this.playerList.splice(filterIndex, 1);
+    this.playerList.splice(targetIndex, 0, temp[0]);
+    this.setState({
+      mediaList, progress: 0, nowMediaIndex: 0, isPlay: false,
+    });
+  }
 
   render() {
     const {
@@ -107,7 +119,8 @@ export default class WallVideoEditor extends Component {
           nowMediaIndex={nowMediaIndex}
           mediaList={mediaList}
           progress={progress}
-          onClickBar={this.onClickProgressItem} />
+          onChangeMediaSort={this.onChangeMediaSort}
+          onDragProgressBar={this.onDragProgressBar} />
       </div>
     );
   }

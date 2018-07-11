@@ -35,4 +35,5 @@ export const Progress = styled.div`
   top: 0;
   left: -2px;
   background-color: red;
+  cursor: col-resize;
 `;

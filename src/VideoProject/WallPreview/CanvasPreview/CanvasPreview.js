@@ -61,7 +61,7 @@ export default class CanvasPreview extends PureComponent {
       canvasList, position, ratio,
     } = this.props;
     const size = { width: this.cd.width * ratio, height: this.cd.height * ratio };
-    const style = { border: '1px solid yellow'};
+    const style = { border: '2px solid yellow'};
     return (
       <Rnd
         className="canvasDraggable"
@@ -79,6 +79,7 @@ export default class CanvasPreview extends PureComponent {
               <path
                 key={`canvas${i}`}
                 stroke="yellow"
+                strokeWidth="2"
                 fill="transparent"
                 d={`
               M${data.coordinate_in[0].x * ratio} ${data.coordinate_in[0].y * ratio}

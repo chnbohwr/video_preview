@@ -1,5 +1,4 @@
 import React, { PureComponent } from 'react';
-import Dom from 'react-dom';
 import PropTypes from 'prop-types';
 import * as Style from './style';
 
@@ -8,38 +7,50 @@ export default class MediaItem extends PureComponent {
     mediaData: PropTypes.object,
     ratio: PropTypes.number,
     isSelect: PropTypes.bool,
-    onClick: PropTypes.func,
+    draggable: PropTypes.bool,
+    onDragStart: PropTypes.func,
+    onDragEnter: PropTypes.func,
   }
 
-  domNode = React.createRef();
+  domNode = React.createRef()
+  initClinetX = 0
 
   static defaultProps = {
     mediaData: {},
     ratio: 1,
     isSelect: false,
-    onClick: () => { }
+    draggable: false,
+    onDragStart: () => { },
+    onDragEnter: () => { },
   }
 
-  onClick = (e) => {
-    const { ratio, mediaData } = this.props;
-    const { x } = Dom.findDOMNode(this.domNode.current).getBoundingClientRect();
-    const { pageX } = e;
-    const progress = (pageX - x) / ratio;
-    this.props.onClick({ mediaData, progress });
+  componentDidMount() {
+    this.domNode.current.ondragstart = () => {
+      this.props.onDragStart(this.props.mediaData);
+    };
+    this.domNode.current.ondragenter = () => {
+      this.props.onDragEnter(this.props.mediaData);
+    };
   }
 
   render() {
-    const { mediaData, ratio, isSelect } = this.props;
+    const {
+      mediaData, ratio, isSelect, draggable
+    } = this.props;
     const style = {
       width: mediaData.length * ratio
     };
     return (
+
       <Style.Item
-        ref={this.domNode}
-        onClick={this.onClick}
+        innerRef={this.domNode}
         style={style}
         title={mediaData.title}
-        isSelect={isSelect} />
+        draggable={draggable}
+        isSelect={isSelect}>
+        {mediaData.title}
+      </Style.Item>
+
     );
   }
 }

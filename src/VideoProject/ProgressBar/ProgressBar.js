@@ -1,5 +1,7 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import produce from 'immer';
+import Draggable from 'react-draggable';
 import * as Style from './style';
 import MediaItem from './ProgressItem/ProgressItem';
 
@@ -11,7 +13,7 @@ const calcProgressX = ({ mediaList, nowMediaIndex, progress }) => {
   return pastTime + progress;
 };
 
-export default class ProgressBar extends PureComponent {
+export default class ProgressBar extends Component {
 
   ratioVariable = 0.25
   minimumRatio = 0.25
@@ -20,19 +22,29 @@ export default class ProgressBar extends PureComponent {
   static propTypes = {
     mediaList: PropTypes.arrayOf(PropTypes.object),
     progress: PropTypes.number,
-    onClickBar: PropTypes.func,
+    onDragProgressBar: PropTypes.func,
     nowMediaIndex: PropTypes.number,
+    onChangeMediaSort: PropTypes.func,
   }
 
   static defaultProps = {
     mediaList: [],
     progress: 0,
-    onClickBar: () => { },
+    onDragProgressBar: () => { },
+    onChangeMediaSort: () => { },
     nowMediaIndex: 0,
   }
 
   state = {
     ratio: 1,
+    draggingProgress: false,
+  }
+
+  shouldComponentUpdate() {
+    if (this.state.draggingProgress) {
+      return false;
+    }
+    return true;
   }
 
   onAddRatio = () => {
@@ -51,31 +63,66 @@ export default class ProgressBar extends PureComponent {
     this.setState({ ratio });
   }
 
-  onClickItem = ({ mediaData, progress }) => {
-    const nowMediaIndex = this.props.mediaList.findIndex(m => m === mediaData);
-    this.props.onClickBar({ nowMediaIndex, progress });
+  onDragProgressStart = () => {
+    this.setState({ draggingProgress: true });
   }
+
+  onDragProgressStop = (e, { x }) => {
+    this.setState({ draggingProgress: false }, () => {
+      let progress = x;
+      let nowMediaIndex = 0;
+      const { mediaList } = this.props;
+      while (progress > mediaList[nowMediaIndex].length) {
+        progress -= mediaList[nowMediaIndex].length;
+        nowMediaIndex += 1;
+      }
+      this.props.onDragProgressBar({ nowMediaIndex, progress });
+    });
+  }
+
+  onDragItemStart = (mediaData) => {
+    this.draggingMediaData = mediaData;
+  }
+
+  onDragItemEnter = (mediaData) => {
+    const filterIndex = this.props.mediaList.findIndex(d => d === this.draggingMediaData);
+    const filtedMediaList = this.props.mediaList.filter(d => d !== this.draggingMediaData);
+    const targetIndex = this.props.mediaList.findIndex(d => d === mediaData);
+    const mediaList = produce(filtedMediaList, (draft) => { draft.splice(targetIndex, 0, this.draggingMediaData); });
+    this.props.onChangeMediaSort({ mediaList, filterIndex, targetIndex });
+  }
+
 
   render() {
     const { mediaList, progress, nowMediaIndex } = this.props;
-    const { ratio } = this.state;
+    const { ratio, draggingProgress } = this.state;
     const progressPosx = calcProgressX({ mediaList, nowMediaIndex, progress }) * ratio;
+    const position = { x: progressPosx, y: 0 };
     const totalWidth = mediaList.reduce((len, video) => (len + video.length), 0);
     return (
       <Style.Container>
         <Style.BarScroller>
-          <Style.ItemsContainer style={{ width: totalWidth * ratio }}>
+          <Style.ItemsContainer style={{ width: totalWidth * ratio + 10 }}>
             {
               mediaList.map((data, index) => (
                 <MediaItem
-                  onClick={this.onClickItem}
+                  key={data.title}
+                  onDragStart={this.onDragItemStart}
+                  onDragEnter={this.onDragItemEnter}
                   isSelect={nowMediaIndex === index}
-                  key={`pi_${data.title}`}
                   mediaData={data}
+                  draggable={!draggingProgress}
                   ratio={ratio} />
               ))
             }
-            <Style.Progress style={{ transform: `translateX(${progressPosx}px)` }} />
+            <Draggable
+              axis="x"
+              position={position}
+              onStop={this.onDragProgressStop}
+              onStart={this.onDragProgressStart}
+            >
+              <Style.Progress />
+            </Draggable>
           </Style.ItemsContainer>
         </Style.BarScroller>
         <Style.ButtonContainer>

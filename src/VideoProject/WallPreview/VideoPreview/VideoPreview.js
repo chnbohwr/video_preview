@@ -19,7 +19,6 @@ export default class VideoPreview extends PureComponent {
     isActive: false,
   }
   render() {
-    console.log('video render trigger');
     const { mediaData, domref } = this.props;
     return (
       <React.Fragment>

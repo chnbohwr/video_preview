@@ -5,4 +5,10 @@ export const Item = styled.div`
   box-sizing: border-box;
   height: 100%;
   border-right: 1px solid #777;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+  color: ${p => (p.isSelect ? '#ddd' : '#555')};
+  cursor: pointer;
+  user-select: none;
 `;
