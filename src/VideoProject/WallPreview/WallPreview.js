@@ -55,17 +55,15 @@ export default class WallPreview extends PureComponent {
             <DraggableCore
               key={`wall${index}`}
               onDrag={this.onDragPreview}
-              cancel=".canvasDraggable"
-              onStart={() => { console.log('hi'); }}
-            >
+              cancel=".canvasDraggable">
               <Style.LayoutContainer
                 style={{
                   display: nowMediaIndex === index ? 'block' : 'none',
-                  transform: `scale(${layoutRatio})translate(${previewDataset[index].x}px,${previewDataset[index].y}px)`
+                  transform: `scale(${layoutRatio})
+                  translate(${previewDataset[index].x}px,${previewDataset[index].y}px)`
                 }}
               >
                 <React.Fragment>
-
                   <Style.VideosContainer>
                     <VideoPreview
                       key={`video${index}`}

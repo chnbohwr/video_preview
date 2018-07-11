@@ -68,6 +68,8 @@ export default class CanvasPreview extends PureComponent {
         style={style}
         position={position}
         size={size}
+        minWidth={this.cd.width}
+        minHeight={this.cd.height}
         onResize={this.onResize}
         lockAspectRatio
         onDragStop={this.onDragStop}>

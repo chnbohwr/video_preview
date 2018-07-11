@@ -44,8 +44,6 @@ export default class WallVideoEditor extends Component {
   }
 
   onChangePlayStatus = ({ isPlay }) => {
-    const nowVideoPlayer = this.playerList[this.state.nowMediaIndex].current;
-    console.log(nowVideoPlayer);
     this.setState({ isPlay }, this.videoControl);
   }
 
@@ -64,7 +62,7 @@ export default class WallVideoEditor extends Component {
   }
 
   videoControl = () => {
-    const { nowMediaIndex, mediaList } = this.state;
+    const { nowMediaIndex } = this.state;
     const nowVideoPlayer = this.playerList[nowMediaIndex].current;
     this.playerList.forEach((p) => {
       const player = p.current;
@@ -97,7 +95,7 @@ export default class WallVideoEditor extends Component {
           nowMediaIndex={nowMediaIndex}
           wallDataset={wallDataset}
           onChangeLayout={this.onChangeLayout}
-          playerList={this.playerList}
+          playerList={playerList}
           layoutRatio={layoutRatio}
         />
         <button type="button" onClick={() => { this.onLayoutZoom({ ratio: 0.25 }); }}>zoom in</button>

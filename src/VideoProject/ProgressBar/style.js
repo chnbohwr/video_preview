@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const Container = styled.div`
   width: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: flex-start;
 `;
 
@@ -22,18 +22,10 @@ export const ItemsContainer = styled.div`
 `;
 
 export const ButtonContainer = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  width: 40px;
-  padding: 0 5px;
-  justify-content: space-between;
+
 `;
 
 export const Button = styled.button`
-  font-size: 8px;
-  height: 18px;
-  line-height: 18px;
 `;
 
 export const Progress = styled.div`
