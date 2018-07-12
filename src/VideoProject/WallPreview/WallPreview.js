@@ -10,40 +10,43 @@ export default class WallPreview extends PureComponent {
   static propTypes = {
     mediaList: PropTypes.array,
     canvasList: PropTypes.array,
-    nowMediaIndex: PropTypes.number,
-    wallDataset: PropTypes.array,
+    nowMediaId: PropTypes.number,
+    wallDataset: PropTypes.object,
     onChangeLayout: PropTypes.func,
-    playerList: PropTypes.array,
+    playerSet: PropTypes.object,
     layoutRatio: PropTypes.number,
   }
   static defaultProps = {
     mediaList: [],
     canvasList: [],
-    nowMediaIndex: 0,
-    wallDataset: [],
+    nowMediaId: 0,
+    wallDataset: {},
     onChangeLayout: () => { },
-    playerList: [],
+    playerSet: {},
     layoutRatio: 1
   }
 
   state = {
-    previewDataset: this.props.mediaList.map(() => ({ x: 0, y: 0 })),
+    previewDataset: this.props.mediaList.reduce((dataset, mediaData) => {
+      dataset[mediaData.id] = { x: 0, y: 0 };
+      return dataset;
+    }, {}),
   }
 
   onDragPreview = (e, d) => {
     const { previewDataset } = this.state;
-    const { nowMediaIndex } = this.props;
-    const x = previewDataset[nowMediaIndex].x + d.deltaX;
-    const y = previewDataset[nowMediaIndex].y + d.deltaY;
+    const { nowMediaId } = this.props;
+    const x = previewDataset[nowMediaId].x + d.deltaX;
+    const y = previewDataset[nowMediaId].y + d.deltaY;
     const newPreviewDataset = produce(this.state.previewDataset, (dataset) => {
-      dataset[this.props.nowMediaIndex] = { x, y };
+      dataset[nowMediaId] = { x, y };
     });
     this.setState({ previewDataset: newPreviewDataset });
   }
 
   render() {
     const {
-      mediaList, nowMediaIndex, playerList,
+      mediaList, nowMediaId, playerSet,
       wallDataset, canvasList, onChangeLayout,
       layoutRatio,
     } = this.props;
@@ -51,33 +54,33 @@ export default class WallPreview extends PureComponent {
     return (
       <Style.Container>
         {
-          mediaList.map((mediaData, index) => (
+          mediaList.map(mediaData => (
             <DraggableCore
-              key={`wall${index}`}
+              key={`wall${mediaData.id}`}
               onDrag={this.onDragPreview}
               cancel=".canvasDraggable">
               <Style.LayoutContainer
                 style={{
-                  display: nowMediaIndex === index ? 'block' : 'none',
+                  display: nowMediaId === mediaData.id ? 'block' : 'none',
                   transform: `scale(${layoutRatio})
-                  translate(${previewDataset[index].x}px,${previewDataset[index].y}px)`
+                  translate(${previewDataset[mediaData.id].x}px,${previewDataset[mediaData.id].y}px)`
                 }}
               >
                 <React.Fragment>
                   <Style.VideosContainer>
                     <VideoPreview
-                      key={`video${index}`}
-                      domref={playerList[index]}
+                      key={`video${mediaData.id}`}
+                      domref={playerSet[mediaData.id]}
                       mediaData={mediaData}
                     />
                   </Style.VideosContainer>
                   <Style.CanvasContainer>
                     <CanvasPreview
-                      key={`canvas${wallDataset[index].id}`}
+                      key={`canvas${mediaData.id}`}
+                      id={mediaData.id}
                       canvasList={canvasList}
-                      position={wallDataset[index].position}
-                      ratio={wallDataset[index].ratio}
-                      id={wallDataset[index].id}
+                      position={wallDataset[mediaData.id].position}
+                      ratio={wallDataset[mediaData.id].ratio}
                       onChange={onChangeLayout} />
                   </Style.CanvasContainer>
                 </React.Fragment>

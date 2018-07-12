@@ -5,9 +5,10 @@ import Draggable from 'react-draggable';
 import * as Style from './style';
 import MediaItem from './ProgressItem/ProgressItem';
 
-const calcProgressX = ({ mediaList, nowMediaIndex, progress }) => {
+const calcProgressX = ({ mediaList, nowMediaId, progress }) => {
+  const mediaIndex = mediaList.findIndex(m => m.id === nowMediaId);
   let pastTime = 0;
-  for (let i = 0; i < nowMediaIndex; i += 1) {
+  for (let i = 0; i < mediaIndex; i += 1) {
     pastTime += mediaList[i].length;
   }
   return pastTime + progress;
@@ -23,7 +24,7 @@ export default class ProgressBar extends Component {
     mediaList: PropTypes.arrayOf(PropTypes.object),
     progress: PropTypes.number,
     onDragProgressBar: PropTypes.func,
-    nowMediaIndex: PropTypes.number,
+    nowMediaId: PropTypes.number,
     onChangeMediaSort: PropTypes.func,
   }
 
@@ -32,7 +33,7 @@ export default class ProgressBar extends Component {
     progress: 0,
     onDragProgressBar: () => { },
     onChangeMediaSort: () => { },
-    nowMediaIndex: 0,
+    nowMediaId: 0,
   }
 
   state = {
@@ -70,13 +71,14 @@ export default class ProgressBar extends Component {
   onDragProgressStop = (e, { x }) => {
     this.setState({ draggingProgress: false }, () => {
       let progress = x;
-      let nowMediaIndex = 0;
+      let mediaIndex = 0;
       const { mediaList } = this.props;
-      while (progress > mediaList[nowMediaIndex].length) {
-        progress -= mediaList[nowMediaIndex].length;
-        nowMediaIndex += 1;
+      while (progress > mediaList[mediaIndex].length) {
+        progress -= mediaList[mediaIndex].length;
+        mediaIndex += 1;
       }
-      this.props.onDragProgressBar({ nowMediaIndex, progress });
+
+      this.props.onDragProgressBar({ nowMediaId: mediaList[mediaIndex].id, progress });
     });
   }
 
@@ -85,6 +87,9 @@ export default class ProgressBar extends Component {
   }
 
   onDragItemEnter = (mediaData) => {
+    if (mediaData === this.draggingMediaData) {
+      return;
+    }
     const filterIndex = this.props.mediaList.findIndex(d => d === this.draggingMediaData);
     const filtedMediaList = this.props.mediaList.filter(d => d !== this.draggingMediaData);
     const targetIndex = this.props.mediaList.findIndex(d => d === mediaData);
@@ -94,9 +99,9 @@ export default class ProgressBar extends Component {
 
 
   render() {
-    const { mediaList, progress, nowMediaIndex } = this.props;
+    const { mediaList, progress, nowMediaId } = this.props;
     const { ratio, draggingProgress } = this.state;
-    const progressPosx = calcProgressX({ mediaList, nowMediaIndex, progress }) * ratio;
+    const progressPosx = calcProgressX({ mediaList, nowMediaId, progress }) * ratio;
     const position = { x: progressPosx, y: 0 };
     const totalWidth = mediaList.reduce((len, video) => (len + video.length), 0);
     return (
@@ -104,13 +109,13 @@ export default class ProgressBar extends Component {
         <Style.BarScroller>
           <Style.ItemsContainer style={{ width: totalWidth * ratio + 10 }}>
             {
-              mediaList.map((data, index) => (
+              mediaList.map(mediaData => (
                 <MediaItem
-                  key={data.title}
+                  key={`progress_${mediaData.id}`}
                   onDragStart={this.onDragItemStart}
                   onDragEnter={this.onDragItemEnter}
-                  isSelect={nowMediaIndex === index}
-                  mediaData={data}
+                  isSelect={nowMediaId === mediaData.id}
+                  mediaData={mediaData}
                   draggable={!draggingProgress}
                   ratio={ratio} />
               ))
@@ -125,10 +130,10 @@ export default class ProgressBar extends Component {
             </Draggable>
           </Style.ItemsContainer>
         </Style.BarScroller>
-        <Style.ButtonContainer>
+        {/* <Style.ButtonContainer>
           <Style.Button onClick={this.onAddRatio}>+</Style.Button>
           <Style.Button onClick={this.onMinusRatio}>-</Style.Button>
-        </Style.ButtonContainer>
+        </Style.ButtonContainer> */}
       </Style.Container>
     );
   }
