@@ -69,15 +69,21 @@ export default class ProgressBar extends Component {
   }
 
   onDragProgressStop = (e, { x }) => {
+
     this.setState({ draggingProgress: false }, () => {
       let progress = x;
       let mediaIndex = 0;
       const { mediaList } = this.props;
+      const totalWidth = mediaList.reduce((len, video) => (len + video.length), 0);
+      if (progress >= totalWidth) {
+        const nowMedia = mediaList[mediaList.length - 1];
+        this.props.onDragProgressBar({ nowMediaId: nowMedia.id, progress: nowMedia.length });
+        return;
+      }
       while (progress > mediaList[mediaIndex].length) {
         progress -= mediaList[mediaIndex].length;
         mediaIndex += 1;
       }
-
       this.props.onDragProgressBar({ nowMediaId: mediaList[mediaIndex].id, progress });
     });
   }
@@ -90,11 +96,10 @@ export default class ProgressBar extends Component {
     if (mediaData === this.draggingMediaData) {
       return;
     }
-    const filterIndex = this.props.mediaList.findIndex(d => d === this.draggingMediaData);
     const filtedMediaList = this.props.mediaList.filter(d => d !== this.draggingMediaData);
     const targetIndex = this.props.mediaList.findIndex(d => d === mediaData);
     const mediaList = produce(filtedMediaList, (draft) => { draft.splice(targetIndex, 0, this.draggingMediaData); });
-    this.props.onChangeMediaSort({ mediaList, filterIndex, targetIndex });
+    this.props.onChangeMediaSort({ mediaList });
   }
 
 

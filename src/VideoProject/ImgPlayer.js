@@ -5,13 +5,14 @@ export default class ImgPlayer {
   constructor(interval) {
     this.currentTime = 0;
     this.interval = interval;
-    this.id = 0;
+    this.intervalId = 0;
   }
 
   play = () => {
-    this.id = setInterval(() => {
+    if (this.intervalId) { clearInterval(this.intervalId); this.intervalId = 0; }
+    this.intervalId = setInterval(() => {
       if (this.currentTime >= this.interval) {
-        clearInterval(this.id);
+        clearInterval(this.intervalId);
         this.onended();
       } else {
         this.ontimeupdate(this.currentTime);
@@ -21,7 +22,7 @@ export default class ImgPlayer {
   }
 
   pause = () => {
-    clearInterval(this.id);
+    clearInterval(this.intervalId);
   }
 
   onended = () => { }
