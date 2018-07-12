@@ -32,7 +32,6 @@ export default class WallVideoEditor extends Component {
   }, {});
 
   onDragProgressBar = ({ nowMediaId, progress }) => {
-    console.log('trigger on Drag progress bar');
     const player = this.playerSet[this.state.nowMediaId].current;
     player.pause();
     player.currentTime = 0;
@@ -46,7 +45,6 @@ export default class WallVideoEditor extends Component {
   }
 
   onEnd = () => {
-    console.log('trigger on end');
     const { nowMediaId, mediaList } = this.state;
     const mediaIndex = mediaList.findIndex(m => m.id === nowMediaId);
     if (mediaIndex < (mediaList.length - 1)) {
@@ -55,7 +53,6 @@ export default class WallVideoEditor extends Component {
   }
 
   onChangePlayStatus = ({ isPlay }) => {
-    console.log('trigger on change play statue');
     this.setState({ isPlay }, this.videoControl);
   }
 
@@ -76,7 +73,6 @@ export default class WallVideoEditor extends Component {
   }
 
   videoControl = () => {
-    console.log('trigger video control');
     const { nowMediaId } = this.state;
     const nowVideoPlayer = this.playerSet[nowMediaId].current;
     nowVideoPlayer.currentTime = this.state.progress;
@@ -89,7 +85,6 @@ export default class WallVideoEditor extends Component {
     }
   }
   onChangeMediaSort = ({ mediaList }) => {
-    console.log('trigger change media sort');
     this.setState({
       mediaList,
     }, () => {
