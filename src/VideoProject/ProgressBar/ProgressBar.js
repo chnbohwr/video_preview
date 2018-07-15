@@ -26,6 +26,7 @@ export default class ProgressBar extends Component {
     onDragProgressBar: PropTypes.func,
     nowMediaId: PropTypes.number,
     onChangeMediaSort: PropTypes.func,
+    onChangeMediaLength: PropTypes.func,
   }
 
   static defaultProps = {
@@ -33,6 +34,7 @@ export default class ProgressBar extends Component {
     progress: 0,
     onDragProgressBar: () => { },
     onChangeMediaSort: () => { },
+    onChangeMediaLength: () => { },
     nowMediaId: 0,
   }
 
@@ -104,7 +106,10 @@ export default class ProgressBar extends Component {
 
 
   render() {
-    const { mediaList, progress, nowMediaId } = this.props;
+    const {
+      mediaList, progress,
+      nowMediaId, onChangeMediaLength,
+    } = this.props;
     const { ratio, draggingProgress } = this.state;
     const progressPosx = calcProgressX({ mediaList, nowMediaId, progress }) * ratio;
     const position = { x: progressPosx, y: 0 };
@@ -122,6 +127,7 @@ export default class ProgressBar extends Component {
                   isSelect={nowMediaId === mediaData.id}
                   mediaData={mediaData}
                   draggable={!draggingProgress}
+                  onChangeMediaLength={onChangeMediaLength}
                   ratio={ratio} />
               ))
             }

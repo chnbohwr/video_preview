@@ -11,4 +11,15 @@ export const Item = styled.div`
   color: ${p => (p.isSelect ? '#ddd' : '#555')};
   cursor: pointer;
   user-select: none;
+  position: relative;
+`;
+
+export const Resizer = styled.div`
+  position: absolute;
+  user-select: none;
+  width: 10px;
+  height: 100%;
+  top: 0px;
+  right: -5px;
+  cursor: col-resize;
 `;

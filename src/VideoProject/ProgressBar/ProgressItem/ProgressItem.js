@@ -1,6 +1,12 @@
 import React, { PureComponent } from 'react';
+import { DraggableCore } from 'react-draggable';
 import PropTypes from 'prop-types';
 import * as Style from './style';
+
+const MEDIA_TYPE = {
+  IMAGE: "i",
+  VIDEO: "v"
+};
 
 export default class MediaItem extends PureComponent {
   static propTypes = {
@@ -10,9 +16,11 @@ export default class MediaItem extends PureComponent {
     draggable: PropTypes.bool,
     onDragStart: PropTypes.func,
     onDragEnter: PropTypes.func,
+    onChangeMediaLength: PropTypes.func,
   }
 
-  domNode = React.createRef()
+  $item = React.createRef()
+  $resizer = React.createRef()
   initClinetX = 0
 
   static defaultProps = {
@@ -22,33 +30,66 @@ export default class MediaItem extends PureComponent {
     draggable: false,
     onDragStart: () => { },
     onDragEnter: () => { },
+    onChangeMediaLength: () => { },
+  }
+
+  state = {
+    isResizing: false,
+  }
+
+  onResizeStart = () => {
+    this.setState({ isResizing: true });
+  }
+  onResize = (e, d) => {
+    this.props.onChangeMediaLength({
+      id: this.props.mediaData.id,
+      deltaLength: d.deltaX
+    });
+  }
+  onResizeEnd = () => {
+    this.setState({ isResizing: false });
   }
 
   componentDidMount() {
-    this.domNode.current.ondragstart = () => {
+    this.$item.current.ondragstart = () => {
       this.props.onDragStart(this.props.mediaData);
     };
-    this.domNode.current.ondragenter = () => {
+    this.$item.current.ondragenter = () => {
       this.props.onDragEnter(this.props.mediaData);
     };
   }
 
   render() {
     const {
-      mediaData, ratio, isSelect, draggable
-    } = this.props;
+      props: {
+        mediaData, ratio, isSelect, draggable,
+      },
+      state: { isResizing },
+    } = this;
     const style = {
       width: mediaData.length * ratio
     };
     return (
 
       <Style.Item
-        innerRef={this.domNode}
+        innerRef={this.$item}
         style={style}
         title={mediaData.title}
-        draggable={draggable}
+        draggable={draggable && !isResizing}
         isSelect={isSelect}>
         {mediaData.title}
+        {
+          (mediaData.type === MEDIA_TYPE.IMAGE)
+          && (
+            <DraggableCore
+              onStart={this.onResizeStart}
+              onDrag={this.onResize}
+              onStop={this.onResizeEnd}>
+              <Style.Resizer />
+            </DraggableCore>
+          )
+        }
+
       </Style.Item>
 
     );

@@ -65,6 +65,14 @@ export default class WallVideoEditor extends Component {
     this.setState({ wallDataset });
   }
 
+  onChangeMediaLength = ({id, deltaLength}) => {
+    const mediaList = produce(this.state.mediaList, (draft) => {
+      const media = draft.find(m => m.id === id);
+      media.length += deltaLength;
+    });
+    this.setState({mediaList});
+  }
+
   onLayoutZoom = ({ ratio }) => {
     let newRatio = this.state.layoutRatio + ratio;
     if (newRatio > 2) { newRatio = 2; }
@@ -127,7 +135,8 @@ export default class WallVideoEditor extends Component {
           mediaList={mediaList}
           progress={progress}
           onChangeMediaSort={this.onChangeMediaSort}
-          onDragProgressBar={this.onDragProgressBar} />
+          onDragProgressBar={this.onDragProgressBar}
+          onChangeMediaLength={this.onChangeMediaLength} />
       </React.Fragment>
     );
   }
